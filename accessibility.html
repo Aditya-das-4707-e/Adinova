@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessibility</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f0f;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #888888;
+            font-weight: 400;
+        }
+        
+        .content {
+            display: grid;
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        
+        .section {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.2s ease;
+        }
+        
+        .section:hover {
+            border-color: #404040;
+            background: #1e1e1e;
+        }
+        
+        .section p {
+            color: #e0e0e0;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+        
+        .section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .github {
+            text-align: center;
+            padding: 32px;
+            background: #151515;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+        }
+        
+        .github a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .github a:hover {
+            color: #888888;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 16px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 24px;
+            }
+            
+            .section p {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Accessibility</h1>
+            <p class="subtitle">Building for everyone</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <p>This site is built for every hand,</p>
+                <p>For eyes that see or need a hand.</p>
+                <p>For screens that speak, for tabs that glide,</p>
+                <p>For all who surf, no need to hide.</p>
+            </div>
+            
+            <div class="section">
+                <p>I tried to make the colors clear,</p>
+                <p>The fonts all sharp, the nav sincere.</p>
+                <p>The layout flows from small to wide,</p>
+                <p>With keyboard paths and ARIA guide.</p>
+            </div>
+            
+            <div class="section">
+                <p>But I'm still learning, every day,</p>
+                <p>So if some part gets in your way—</p>
+                <p>Just let me know, I'll patch the seam,</p>
+                <p>And make this place more than a dream.</p>
+            </div>
+        </div>
+        
+        <div class="github">
+            <a href="https://github.com/Aditya-das-4707-e" target="_blank">
+                github.com/Aditya-das-4707-e
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
