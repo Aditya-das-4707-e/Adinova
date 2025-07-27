@@ -45,6 +45,7 @@ I’m currently working on this in my free time — so expect regular updates!
 Once the basic player is functional, I’ll start polishing the UI and adding more interactive features.
 
 If you're curious, feel free to watch the repo or drop a star ⭐️
+
 And if you want to add song with your playlist then contact me: adityadas99906@gmail.com and sent me your and your song name.
 
 ---
