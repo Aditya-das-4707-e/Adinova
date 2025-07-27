@@ -350,6 +350,9 @@ body {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    width: 200px;
+    min-width: 200px;
+    overflow: hidden;
 }
 
 .songinfo span {
@@ -410,6 +413,13 @@ body {
 .songtime {
     color: white;
     padding: 0 12px;
+}
+
+.songtime {
+    width: 120px;
+    min-width: 120px;
+    text-align: right;
+    overflow: hidden;
 }
 
 .abovebar {
@@ -748,6 +758,20 @@ body {
     .songtime {
         font-size: 16px;
         padding: 0 8px;
+    }
+    
+    .songinfo {
+        min-width: 200px;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .songtime {
+        width: 120px;
+        min-width: 120px;
+        text-align: right;
+        overflow: hidden;
     }
 
     .footer {
