@@ -24,6 +24,13 @@ body {
     height: 2rem;
     width: 6rem;
     cursor: pointer;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.picture:hover {
+    box-shadow: 0 0 15px rgba(50, 205, 50, 0.8), 0 0 30px rgba(50, 205, 50, 0.4);
+    transform: scale(1.05);
 }
 
 .left {
@@ -94,8 +101,8 @@ body {
 }
 
 .footer a:hover {
-    color: white;
-    background-color: rgba(255, 255, 255, 0.1);
+    color: #32CD32;
+    background-color: rgba(50, 205, 50, 0.1);
     transform: translateY(-1px);
 }
 
@@ -148,9 +155,8 @@ body {
 }
 
 .yourPlaylists .card:hover {
-    border-color: #32CD32;
-    box-shadow: 0 0 15px rgba(50, 205, 50, 0.3);
-    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.4);
+    transform: translateY(-5px) scale(1.02);
 }
 
 .yourPlaylists .card>* {
@@ -209,10 +215,14 @@ body {
     outline: none;
     font-size: 16px;
     position: sticky;
+    border-radius: 25px;
+    padding: 10px 20px;
+    transition: box-shadow 0.3s ease, transform 0.2s ease, color 0.3s ease;
 }
 
 .navbtn1:hover {
-    font-size: 1.1rem;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.4);
+    transform: scale(1.05);
     color: white;
 }
 
@@ -224,16 +234,12 @@ body {
     padding: 10px 20px;
     cursor: pointer;
     border: none;
-    transition: transform 0.2s ease-out, opacity 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
 .navbtn2:hover {
-    border-radius: 17px;
-    font-weight: bold;
-    width: 80px;
-    cursor: pointer;
-    border: none;
-    transform: scale(1.2);
+    box-shadow: 0 0 15px rgba(50, 205, 50, 0.8), 0 0 30px rgba(50, 205, 50, 0.4);
+    transform: scale(1.05);
 }
 
 .playbar {
@@ -318,10 +324,11 @@ body {
 
 .songList ul li:hover {
     transform: translateY(-3px) rotateX(2deg) scale(1.02);
-    border-color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 0, 0, 0.8);
     box-shadow:
+        0 0 15px rgba(255, 0, 0, 0.8),
+        0 0 30px rgba(255, 0, 0, 0.4),
         0 10px 30px rgba(0, 0, 0, 0.3),
-        0 5px 15px rgba(9, 142, 160, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -386,12 +393,35 @@ body {
 
 .seekbar {
     width: 98%;
-    border: 2px solid #fff;
+    height: 4px;
+    background: #404040;
     border-radius: 10px;
     position: absolute;
     bottom: 16px;
     cursor: pointer;
+    transition: background 0.3s ease;
+    overflow: hidden;
+}
 
+.seekbar:hover {
+    background: #32CD32;
+}
+
+.seekbar:active {
+    background: #32CD32;
+}
+
+.seekbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: #32CD32;
+    border-radius: 10px;
+    transition: width 0.1s linear;
+    z-index: 1;
 }
 
 .circle {
@@ -402,11 +432,52 @@ body {
     position: absolute;
     bottom: -6px;
     left: 0%;
-    transition: left 0.5s;
+    transition: left 0.5s, box-shadow 0.3s ease;
+    z-index: 2;
+}
+
+.seekbar:hover .circle {
+    box-shadow: 0 0 12px rgba(50, 205, 50, 0.8);
+}
+
+.seekbar:active .circle {
+    box-shadow: 0 0 15px rgba(50, 205, 50, 1);
 }
 
 .songbuttons img {
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.songbuttons img:hover {
+    transform: scale(1.1);
+}
+
+/* Previous song button - Yellow hover */
+.songbuttons img#previous:hover {
+    filter: drop-shadow(0 0 10px #FFFF00);
+}
+
+/* Next song button - Yellow hover */
+.songbuttons img#next:hover {
+    filter: drop-shadow(0 0 10px #FFFF00);
+}
+
+/* Play button - Lime hover */
+.songbuttons img#play:hover {
+    filter: drop-shadow(0 0 10px #32CD32);
+}
+
+/* Pause button - Red hover */
+.songbuttons img#pause:hover {
+    filter: drop-shadow(0 0 10px #FF0000);
+}
+
+.timevol{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
 .songinfo,
@@ -415,11 +486,21 @@ body {
     padding: 0 12px;
 }
 
+.songinfo {
+    min-width: 200px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .songtime {
-    width: 120px;
-    min-width: 120px;
+    width: 125px;
+    /* min-width: 120px; */
     text-align: right;
     overflow: hidden;
+    color: white;
+    padding: 0 12px;
 }
 
 .abovebar {
@@ -428,6 +509,81 @@ body {
     align-items: center;
     padding: 10px 4;
     position: static;
+}
+
+.volume {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volume img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.range {
+    display: flex;
+    align-items: center;
+}
+
+.range input[type="range"] {
+    width: 80px;
+    height: 4px;
+    background: #404040;
+    border-radius: 2px;
+    outline: none;
+    -webkit-appearance: none;
+    transition: background 0.3s ease;
+}
+
+.range input[type="range"]:hover {
+    background: #32CD32;
+}
+
+.range input[type="range"]:active {
+    background: #32CD32;
+}
+
+.range input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.range input[type="range"]:hover::-webkit-slider-thumb {
+    background: #fff;
+    box-shadow: 0 0 8px rgba(50, 205, 50, 0.6);
+}
+
+.range input[type="range"]:active::-webkit-slider-thumb {
+    background: #fff;
+    box-shadow: 0 0 8px rgba(50, 205, 50, 0.8);
+}
+
+.range input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.range input[type="range"]:hover::-moz-range-thumb {
+    background: #fff;
+    box-shadow: 0 0 8px rgba(50, 205, 50, 0.6);
+}
+
+.range input[type="range"]:active::-moz-range-thumb {
+    background: #fff;
+    box-shadow: 0 0 8px rgba(50, 205, 50, 0.8);
 }
 
 /* Mobile Toggle Button */
@@ -906,7 +1062,7 @@ body {
     }
 
     .playbar {
-        height: 100px;
+        height: 118px;
         padding: 10px;
     }
 
