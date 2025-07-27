@@ -234,6 +234,17 @@ async function main() {
             }
         });
 
+    // Home element click event to prevent page reload
+    const homeElement = document.querySelector('.home ul li');
+    if (homeElement) {
+        homeElement.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent event from bubbling up to parent elements
+            event.preventDefault();  // Prevent default behavior
+            console.log('Home clicked - page reload prevented');
+            // Add any home-specific functionality here if needed
+        });
+    }
+
     // Logo click event to reload the page
     const logo = document.querySelector('.logo .picture');
     if (logo) {

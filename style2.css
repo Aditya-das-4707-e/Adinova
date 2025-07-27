@@ -333,8 +333,8 @@ body {
 .playbar {
     position: absolute;
     bottom: 0;
-    background-color: rgba(40, 40, 40, 0.9);
-    backdrop-filter: blur(10px);
+    background-color: #000000e3;
+    /* backdrop-filter: blur(10px); */
     height: 80px;
     width: 100%;
     padding: 15px 20px;
@@ -377,22 +377,18 @@ body {
     max-height: 50vh;
     overflow-y: auto;
     scrollbar-width: none;
-    /* scrollbar-color: #4a4a4a #313030; */
-    -ms-over
 }
 
 /* .songList ul::-webkit-scrollbar {
     width: 8px;
-} */ */
+} */
 
 .songList ul::-webkit-scrollbar-track {
     background: #313030;
-    /* border-radius: 10px; */
-} 
+}
 
 .songList ul::-webkit-scrollbar-thumb {
     background-color: #4a4a4a;
-    /* border-radius: 10px; */
 }
 
 .songList ul li {
