@@ -146,12 +146,16 @@ body {
 
 .yourPlaylists .card {
     width: 200px;
+    height: 280px;
     padding: 10px;
     border-radius: 8px;
     background-color: #252525;
     transition: all 0.3s ease;
     border: 2px solid transparent;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .yourPlaylists .card:hover {
@@ -173,7 +177,9 @@ body {
 
 .card img {
     width: 100%;
-    object-fit: contain;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 6px;
 }
 
 .card:hover .play {

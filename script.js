@@ -1,6 +1,7 @@
 let currentSong = new Audio();
 let songs = [];
 let currentSongIndex = 0;
+let curFolder;
 
 // Function to update song list icons based on current playing state
 const updateSongListIcons = () => {
@@ -42,234 +43,224 @@ function secondsToMinutesSeconds(seconds) {
     return `${formattedMinutes}:${formattedSeconds}`;
 }
 
-async function getSongs() {
-    let a = await fetch("songs/");
-    let response = await a.text();
+async function getSongs(folder) {
+    curFolder = folder;
+    const normalizedFolder = folder.replace(/^\/|\/$/g, ''); // Remove leading/trailing slashes
+    let response = await fetch(`/${normalizedFolder}/`);
+    let html = await response.text();
     let div = document.createElement("div");
-    div.innerHTML = response;
-    let as = div.getElementsByTagName("a");
-    let songs = [];
-    for (let index = 0; index < as.length; index++) {
-        const element = as[index];
-        if (element.href.endsWith(".mp3")) {
-            songs.push("songs/" + element.href.split("/songs/")[1]);
+    div.innerHTML = html;
+    let links = div.getElementsByTagName("a");
+    let songList = [];
+    
+    for (let link of links) {
+        if (link.href.endsWith(".mp3")) {
+            songList.push(link.href.split(`${folder}/`)[1]);
         }
     }
-    return songs
+    return songList;
 }
 
 const playMusic = (track, updateIndex = true) => {
-    currentSong.src = track;
+    currentSong.src = `/${curFolder}/${track}`;
     currentSong.play();
     play.src = "pause.svg";
-    document.querySelector(".songinfo").innerHTML = decodeURI(track).replace("songs/", "").replace(".mp3", "").replaceAll("_", " ").replaceAll("%20", " ");
+    document.querySelector(".songinfo").innerHTML = decodeURI(track)
+        .replace("songs/", "")
+        .replace(".mp3", "")
+        .replaceAll("_", " ")
+        .replaceAll("%20", " ");
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
     
-    // Update current song index if needed
     if (updateIndex) {
         currentSongIndex = songs.findIndex(song => song === track);
     }
-    
-    // Update song list icons
     updateSongListIcons();
-}
+};
 
 const playNextSong = () => {
     if (songs.length === 0) return;
-    
-    currentSongIndex = (currentSongIndex + 1) % songs.length; // Loop back to first song after last
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
     playMusic(songs[currentSongIndex], false);
-}
+};
 
 const playPreviousSong = () => {
     if (songs.length === 0) return;
-    
-    currentSongIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1; // Loop to last song if at first
+    currentSongIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1;
     playMusic(songs[currentSongIndex], false);
-}
+};
 
 async function main() {
-
-    songs = await getSongs(); // Remove 'let' to use global variable
-    currentSong.src = songs[0]; // set the first song as the current song
-    currentSong.load(); // load the song
+    // Get the first card's folder to load as default
+    const firstCard = document.querySelector('.card');
+    const defaultFolder = firstCard ? firstCard.dataset.folder : 'mysongs';
     
-    // Set default volume to full (100%)
-    currentSong.volume = 1.0;
-    document.querySelector(".range input[type='range']").value = 100;
+    //get all songs from the first playlist by default
+    songs = await getSongs(`songs/${defaultFolder}`); // Load songs from first card
     
-    // Display the first song name in the playbar on page load
     if (songs.length > 0) {
-        const firstSongName = decodeURI(songs[0]).replace("songs/", "").replace(".mp3", "").replaceAll("_", " ").replaceAll("%20", " ");
+        currentSong.src = `/${curFolder}/${songs[0]}`;
+        currentSong.load();
+        currentSong.volume = 1.0;
+        document.querySelector(".range input[type='range']").value = 100;
+        
+        const firstSongName = decodeURI(songs[0])
+            .replace("songs/", "")
+            .replace(".mp3", "")
+            .replaceAll("_", " ")
+            .replaceAll("%20", " ");
         document.querySelector(".songinfo").innerHTML = firstSongName;
         document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
     }
 
-    let songUL = document.querySelector(".songList ul");
-    for (const song of songs) {
-        const cleanName = song.replace("songs/", "").replace(".mp3", "").replaceAll("_", " ").replaceAll("%20", " ");
+    // Function to populate song list
+    const populateSongList = () => {
+        let songUL = document.querySelector(".songList ul");
+        songUL.innerHTML = ""; // Clear existing list
+        
+        for (const song of songs) {
+            const cleanName = song.replace("songs/", "")
+                .replace(".mp3", "")
+                .replaceAll("_", " ")
+                .replaceAll("%20", " ");
 
-        songUL.innerHTML += `<li data-file="${song}">
-        <img class="invert" src="music.svg" alt="">
-        <div class="info">
-            <div>${cleanName}</div>
-            <div>Adinova (Feel the beat)</div>
-        </div>
-        <div class="playnow">
-            <span>Play Now</span>
-            <img class="invert" src="play.svg" alt="">
-        </div>
-    </li>`;
-    }
+            songUL.innerHTML += `
+                <li data-file="${song}">
+                    <img class="invert" src="music.svg" alt="">
+                    <div class="info">
+                        <div>${cleanName}</div>
+                        <div>Adinova (Feel the beat)</div>
+                    </div>
+                    <div class="playnow">
+                        <span>Play Now</span>
+                        <img class="invert" src="play.svg" alt="">
+                    </div>
+                </li>`;
+        }
 
-    document.querySelectorAll(".songList li").forEach(songItem => {
-        songItem.addEventListener("click", () => {
-            const songPath = songItem.dataset.file;
-            
-            // Check if the clicked song is the same as currently playing
-            if (currentSong.src.endsWith(songPath.replace("songs/", "")) && !currentSong.paused) {
-                // If same song is playing, pause it
-                currentSong.pause();
-                play.src = "play.svg";
+        // Re-attach song click handlers after updating the list
+        attachSongClickHandlers();
+    };
+
+    // Function to attach song click handlers
+    const attachSongClickHandlers = () => {
+        document.querySelectorAll(".songList li").forEach(songItem => {
+            songItem.addEventListener("click", () => {
+                const songPath = songItem.dataset.file;
+                
+                if (currentSong.src.endsWith(songPath.replace("songs/", ""))) {
+                    if (!currentSong.paused) {
+                        currentSong.pause();
+                        play.src = "play.svg";
+                    } else {
+                        currentSong.play();
+                        play.src = "pause.svg";
+                    }
+                } else {
+                    playMusic(songPath);
+                }
                 updateSongListIcons();
-            } else if (currentSong.src.endsWith(songPath.replace("songs/", "")) && currentSong.paused) {
-                // If same song is paused, resume it
-                currentSong.play();
-                play.src = "pause.svg";
-                updateSongListIcons();
-            } else {
-                // If different song, play the new song
-                playMusic(songPath);
-            }
+            });
         });
-    });
+    };
 
-    // attach an event listener to the play next and previous buttons
+    // Populate initial song list
+    populateSongList();
+
+    // Play/Pause button
     play.addEventListener("click", () => {
         if (currentSong.paused) {
-            currentSong.play()
+            currentSong.play();
             play.src = "pause.svg";
-            updateSongListIcons();
         } else {
             currentSong.pause();
             play.src = "play.svg";
-            updateSongListIcons();
         }
-    })
-
-    // Add event listeners for play and pause events to update icons
-    currentSong.addEventListener("play", () => {
         updateSongListIcons();
     });
 
-    currentSong.addEventListener("pause", () => {
-        updateSongListIcons();
-    });
-
-    // time update 
+    // Time updates
     currentSong.addEventListener("timeupdate", () => {
-        // console.log(currentSong.currentTime, currentSong.duration);
-        document.querySelector(".songtime").innerHTML = `${secondsToMinutesSeconds(currentSong.currentTime)} / ${secondsToMinutesSeconds(currentSong.duration)}`;
-        document.querySelector(".circle").style.left = currentSong.currentTime / currentSong.duration * 100 + "%";
-    })
+        document.querySelector(".songtime").innerHTML = 
+            `${secondsToMinutesSeconds(currentSong.currentTime)} / ${secondsToMinutesSeconds(currentSong.duration)}`;
+        document.querySelector(".circle").style.left = 
+            (currentSong.currentTime / currentSong.duration * 100) + "%";
+    });
 
-    // seekbar click, move and slide
+    // Seekbar
     document.querySelector(".seekbar").addEventListener("click", (e) => {
-        let percent = (e.offsetX / e.target.getBoundingClientRect().width) * 100
+        const percent = (e.offsetX / e.target.getBoundingClientRect().width) * 100;
         document.querySelector(".circle").style.left = percent + "%";
         currentSong.currentTime = currentSong.duration * (percent / 100);
-    })
+    });
 
-    // Auto-play next song when current song ends
-    currentSong.addEventListener("ended", () => {
-        playNextSong();
-    })
+    // Song ended
+    currentSong.addEventListener("ended", playNextSong);
 
-    // Next and Previous button functionality
-    document.getElementById("next").addEventListener("click", () => {
-        playNextSong();
-    })
+    // Next/Previous buttons
+    document.getElementById("next").addEventListener("click", playNextSong);
+    document.getElementById("previous").addEventListener("click", playPreviousSong);
 
-    document.getElementById("previous").addEventListener("click", () => {
-        playPreviousSong();
-    })
+    // Volume control
+    document.querySelector(".range input").addEventListener("input", (e) => {
+        currentSong.volume = e.target.value / 100;
+    });
 
-    // Mobile Toggle Functionality
-        const mobileToggle = document.getElementById('mobileToggle');
-        const sidebar = document.getElementById('sidebar');
-        const hamburger = document.getElementById('hamburger');
-        const mobileOverlay = document.getElementById('mobileOverlay');
+    // Mobile menu toggle
+    const mobileToggle = document.getElementById('mobileToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mobileOverlay = document.getElementById('mobileOverlay');
 
-        mobileToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-            hamburger.classList.toggle('active');
-            mobileOverlay.classList.toggle('active');
+    mobileToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        mobileOverlay.classList.toggle('active');
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    });
+
+    mobileOverlay.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        mobileOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    // Logo reload
+    document.querySelectorAll('.logo, .navbar-logo-image').forEach(logo => {
+        logo.addEventListener('click', () => location.reload());
+    });
+
+    //load the library when a card is clicked
+    Array.from(document.querySelectorAll('.card')).forEach(e => {
+        e.addEventListener('click', async (event) => {
+            console.log('Card clicked:', event.currentTarget.dataset.folder);
             
-            if (sidebar.classList.contains('active')) {
-                mobileOverlay.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            } else {
-                setTimeout(() => {
-                    mobileOverlay.style.display = 'none';
-                }, 300);
-                document.body.style.overflow = '';
+            // Load songs from the selected folder
+            songs = await getSongs(`songs/${event.currentTarget.dataset.folder}`);
+            console.log('Loaded songs:', songs);
+            
+            // Update the song list display
+            populateSongList();
+            
+            // If there are songs, set up the first one
+            if (songs.length > 0) {
+                currentSong.src = `/${curFolder}/${songs[0]}`;
+                currentSong.load();
+                currentSongIndex = 0;
+                
+                const firstSongName = decodeURI(songs[0])
+                    .replace("songs/", "")
+                    .replace(".mp3", "")
+                    .replaceAll("_", " ")
+                    .replaceAll("%20", " ");
+                document.querySelector(".songinfo").innerHTML = firstSongName;
+                document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
+                
+                // Reset play button
+                play.src = "play.svg";
             }
         });
-
-        // Close sidebar when clicking overlay
-        mobileOverlay.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-            hamburger.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-            setTimeout(() => {
-                mobileOverlay.style.display = 'none';
-            }, 300);
-            document.body.style.overflow = '';
-        });
-
-        // Close sidebar on window resize if screen becomes larger
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('active');
-                hamburger.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-                mobileOverlay.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-        });
-
-    // Home element click event to prevent page reload
-    const homeElement = document.querySelector('.home ul li');
-    if (homeElement) {
-        homeElement.addEventListener('click', function(event) {
-            event.stopPropagation(); // Prevent event from bubbling up to parent elements
-            event.preventDefault();  // Prevent default behavior
-            console.log('Home clicked - page reload prevented');
-            // Add any home-specific functionality here if needed
-        });
-    }
-
-    // Logo click event to reload the page
-    const logo = document.querySelector('.logo .picture');
-    if (logo) {
-        logo.addEventListener('click', function() {
-            window.location.reload();
-        });
-    }
-
-    // Navbar logo click event to reload the page
-    const navbarLogo = document.querySelector('.navbar-logo-image');
-    if (navbarLogo) {
-        navbarLogo.addEventListener('click', function() {
-            window.location.reload();
-        });
-    }
-
-    //add an event to volume slider
-    document.querySelector(".range").getElementsByTagName("input")[0].addEventListener("change", (e) => {
-        console.log("Setting volume to", e.target.value, "/100");
-        currentSong.volume = parseInt(e.target.value) / 100;
-    })
+    });
 
 }
+
+// Start the app
 main();
