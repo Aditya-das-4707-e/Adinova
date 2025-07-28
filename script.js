@@ -94,6 +94,10 @@ async function main() {
     currentSong.src = songs[0]; // set the first song as the current song
     currentSong.load(); // load the song
     
+    // Set default volume to full (100%)
+    currentSong.volume = 1.0;
+    document.querySelector(".range input[type='range']").value = 100;
+    
     // Display the first song name in the playbar on page load
     if (songs.length > 0) {
         const firstSongName = decodeURI(songs[0]).replace("songs/", "").replace(".mp3", "").replaceAll("_", " ").replaceAll("%20", " ");
@@ -260,6 +264,12 @@ async function main() {
             window.location.reload();
         });
     }
+
+    //add an event to volume slider
+    document.querySelector(".range").getElementsByTagName("input")[0].addEventListener("change", (e) => {
+        console.log("Setting volume to", e.target.value, "/100");
+        currentSong.volume = parseInt(e.target.value) / 100;
+    })
 
 }
 main();

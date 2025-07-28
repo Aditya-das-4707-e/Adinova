@@ -276,7 +276,7 @@ body {
     border: 1px solid white;
     margin: 12px 0;
     padding: 12px 20px;
-    border-radius: 32px;
+    border-radius: 23px;
     cursor: pointer;
     font-family: "DynaPuff", system-ui;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -536,6 +536,7 @@ body {
     outline: none;
     -webkit-appearance: none;
     transition: background 0.3s ease;
+    cursor: pointer;
 }
 
 .range input[type="range"]:hover {
