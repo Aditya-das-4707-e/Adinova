@@ -228,6 +228,31 @@ async function main() {
         logo.addEventListener('click', () => location.reload());
     });
 
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    
+    // Check for saved theme preference or default to dark mode
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+        body.classList.add('light-theme');
+        themeToggle.textContent = 'Dark';
+    } else {
+        themeToggle.textContent = 'Light';
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('light-theme');
+        
+        if (body.classList.contains('light-theme')) {
+            themeToggle.textContent = 'Dark';
+            localStorage.setItem('theme', 'light');
+        } else {
+            themeToggle.textContent = 'Light';
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+
     //load the library when a card is clicked
     Array.from(document.querySelectorAll('.card')).forEach(e => {
         e.addEventListener('click', async (event) => {

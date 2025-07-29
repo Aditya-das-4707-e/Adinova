@@ -12,6 +12,164 @@ body {
     color: white;
     overflow-x: hidden;
     min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light theme styles */
+body.light-theme {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+body.light-theme .container {
+    background-color: #f5f5f5 !important;
+}
+
+body.light-theme .left {
+    background-color: #ffffff !important;
+    border: 1px solid #e0e0e0;
+}
+
+body.light-theme .right {
+    background-color: #ffffff !important;
+    border: 1px solid #e0e0e0;
+}
+
+body.light-theme .header {
+    background-color: #f8f8f8 !important;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+body.light-theme .heading{
+    color: black;
+}
+
+body.light-theme .home ul li {
+    color: black;
+}
+
+body.light-theme .separate {
+    background-color: #e0e0e0;
+}
+
+body.light-theme .yourPlaylists .card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    color: #333;
+}
+
+body.light-theme .yourPlaylists .card:hover {
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.3), 0 0 30px rgba(0, 123, 255, 0.1);
+}
+
+body.light-theme .songList ul li {
+    border: 1px solid #333;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #333;
+}
+
+body.light-theme .songList ul li:hover {
+    border-color: rgba(0, 123, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.3), 0 0 30px rgba(0, 123, 255, 0.1);
+}
+
+body.light-theme .playbar {
+    background-color: #f8f8f8e3;
+    border-top: 1px solid #e0e0e0;
+}
+
+body.light-theme .seekbar {
+    background: #d0d0d0;
+}
+
+body.light-theme .seekbar:hover {
+    background: #007bff;
+}
+
+body.light-theme .seekbar::before {
+    background: #007bff;
+}
+
+body.light-theme .footer a {
+    color: #666;
+}
+
+body.light-theme .footer a:hover {
+    color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+body.light-theme .navbtn2 {
+    background-color: #333;
+    color: white;
+}
+
+body.light-theme .navbtn2:hover {
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.8), 0 0 30px rgba(0, 123, 255, 0.4);
+}
+
+body.light-theme .nav-arrow path {
+    stroke: #333 !important;
+}
+
+body.light-theme .invert {
+    filter: invert(1) !important;
+}
+
+/* Light theme SVG styles */
+body.light-theme svg {
+    background-color: black;
+    border-radius: 4px; /* optional: adds rounded corners to the background */
+    padding: 2px; /* optional: adds some spacing around the SVG */
+}
+
+/* Specific SVG adjustments for light theme */
+body.light-theme .play svg circle {
+    fill: black; /* Ensures the play button circle background stays black */
+    stroke: black; /* Ensures the play button circle border stays black */
+}
+
+body.light-theme .play svg path {
+    fill: white; /* Makes the play triangle white for contrast */
+    stroke: white; /* Makes the play triangle border white */
+}
+
+body.light-theme .songbuttons img {
+    background-color: rgb(255, 255, 255);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+body.light-theme .songbuttons img:hover {
+    background-color: #f0f0f0;
+}
+
+body.light-theme .circle {
+    background-color: #000000;
+}
+
+body.light-theme .volume img {
+    background-color: black;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+body.light-theme .home ul li img {
+    background: #ffffff;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+body.light-theme .heading img {
+    background-color: #ffffff;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+body.light-theme .navbar-logo-image {
+    background-color: black;
+    border-radius: 4px;
+    padding: 2px;
 }
 
 .container {
@@ -56,6 +214,26 @@ body {
     padding-top: 14px;
     font-weight: bold;
     cursor: pointer;
+    text-decoration: none;
+}
+
+.about {
+    color: white;
+    text-decoration: none;
+    display: inline;
+    white-space: nowrap;
+}
+
+.about:hover {
+    color: #32CD32;
+}
+
+body.light-theme .about {
+    color: black;
+}
+
+body.light-theme .about:hover {
+    color: #007bff;
 }
 
 .heading {
@@ -214,7 +392,8 @@ body {
 
 .navbtn1 {
     background-color: rgb(22, 22, 22);
-    color: rgb(175, 169, 169);
+    color: lime;
+    text-decoration: none;
     font-weight: bold;
     cursor: pointer;
     border: none;
@@ -224,6 +403,15 @@ body {
     border-radius: 25px;
     padding: 10px 20px;
     transition: box-shadow 0.3s ease, transform 0.2s ease, color 0.3s ease;
+}
+
+.navbtn1 a {
+    color: lime;
+    text-decoration: none;
+}
+
+.navbtn1 a:hover {
+    color: white;
 }
 
 .navbtn1:hover {
@@ -815,6 +1003,7 @@ body {
     .navbtn2 {
         font-size: 14px;
         padding: 8px 12px;
+        text-decoration: none;
     }
 
     .yourPlaylists {
