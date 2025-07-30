@@ -1,3 +1,17 @@
+// Function to update the selected song in the UI
+const updateSelectedSong = () => {
+    document.querySelectorAll(".songList li").forEach(songItem => {
+        const songPath = songItem.dataset.file;
+        const encodedSongPath = encodeURIComponent(songPath);
+
+        if (currentSong.src.includes(encodedSongPath)) {
+            songItem.classList.add("playing");
+        } else {
+            songItem.classList.remove("playing");
+        }
+    });
+};
+
 let currentSong = new Audio();
 let songs = [];
 let currentSongIndex = 0;
@@ -101,6 +115,7 @@ const playMusic = (track, updateIndex = true) => {
         currentSongIndex = songs.findIndex(song => song === track);
     }
     updateSongListIcons();
+    updateSelectedSong();
 };
 
 const playNextSong = () => {
@@ -193,6 +208,7 @@ async function main() {
                     playMusic(songPath);
                 }
                 updateSongListIcons();
+                updateSelectedSong();
             });
         });
     };
@@ -306,6 +322,9 @@ async function main() {
                 currentSong.src = `/${encodedPath}/${encodedTrack}`;
                 currentSong.load();
                 currentSongIndex = 0;
+                playMusic(songs[0], false);
+                play.src = "pause.svg";
+                
                 
                 // Set volume to high for new playlist (mobile and desktop)
                 currentSong.volume = 1.0;
@@ -321,14 +340,11 @@ async function main() {
                     .replaceAll("_", " ");
                 document.querySelector(".songinfo").innerHTML = firstSongName;
                 document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
-                
-                // Reset play button
-                play.src = "play.svg";
             }
         });
     });
 
 }
 
-// Start the app
+// Start the site
 main();

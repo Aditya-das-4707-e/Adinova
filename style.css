@@ -1,3 +1,24 @@
+.songList ul li.playing {
+    background: linear-gradient(-45deg, #32CD32, #007bff, #32CD32, #007bff);
+    background-size: 400% 400%;
+    color: white;
+    border: 2px solid #32CD32;
+    animation: gradient-wave 3s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(50, 205, 50, 0.6), 0 0 40px rgba(0, 123, 255, 0.4);
+}
+
+@keyframes gradient-wave {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Boldonse&family=Indie+Flower&family=Playwrite+MX+Guides&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Boldonse&family=DynaPuff:wght@400..700&family=Indie+Flower&family=Playwrite+MX+Guides&display=swap');
 
@@ -328,6 +349,7 @@ body.light-theme .about:hover {
     max-height: 60vh;
     justify-content: flex-start;
     align-items: flex-start;
+    padding-bottom: 73px;
 }
 
 .yourPlaylists .card {
@@ -1208,7 +1230,7 @@ body.light-theme .about:hover {
     }
 
     .playbar {
-        height: 118px;
+        height: 132px;
         padding: 10px;
         background-color: #000000e3;
     }
