@@ -10,7 +10,9 @@ const updateSongListIcons = () => {
         const playIcon = songItem.querySelector(".playnow img");
         const playText = songItem.querySelector(".playnow span");
         
-        if (currentSong.src.endsWith(songPath.replace("songs/", ""))) {
+        // Check if this is the current song by comparing the encoded filename
+        const encodedSongPath = encodeURIComponent(songPath);
+        if (currentSong.src.includes(encodedSongPath)) {
             // This is the current song
             if (!currentSong.paused) {
                 // Song is playing - show pause icon
@@ -46,30 +48,53 @@ function secondsToMinutesSeconds(seconds) {
 async function getSongs(folder) {
     curFolder = folder;
     const normalizedFolder = folder.replace(/^\/|\/$/g, ''); // Remove leading/trailing slashes
-    let response = await fetch(`/${normalizedFolder}/`);
-    let html = await response.text();
-    let div = document.createElement("div");
-    div.innerHTML = html;
-    let links = div.getElementsByTagName("a");
-    let songList = [];
     
-    for (let link of links) {
-        if (link.href.endsWith(".mp3")) {
-            songList.push(link.href.split(`${folder}/`)[1]);
+    try {
+        // Encode the entire path properly for URL
+        const encodedPath = normalizedFolder.split('/').map(part => encodeURIComponent(part)).join('/');
+        console.log('Fetching from path:', `/${encodedPath}/`);
+        
+        let response = await fetch(`/${encodedPath}/`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+        
+        let html = await response.text();
+        let div = document.createElement("div");
+        div.innerHTML = html;
+        let links = div.getElementsByTagName("a");
+        let songList = [];
+        
+        for (let link of links) {
+            if (link.href.endsWith(".mp3")) {
+                // Extract just the filename from the full URL
+                const fileName = decodeURIComponent(link.href.split('/').pop());
+                songList.push(fileName);
+            }
+        }
+        console.log('Found songs:', songList);
+        return songList;
+    } catch (error) {
+        console.error('Error fetching songs from', folder, ':', error);
+        return [];
     }
-    return songList;
 }
 
 const playMusic = (track, updateIndex = true) => {
-    currentSong.src = `/${curFolder}/${track}`;
+    // Encode the path properly for the audio source
+    const encodedPath = curFolder.split('/').map(part => encodeURIComponent(part)).join('/');
+    const encodedTrack = encodeURIComponent(track);
+    currentSong.src = `/${encodedPath}/${encodedTrack}`;
+    
+    // Ensure volume is always high when playing any song
+    currentSong.volume = 1.0;
+    document.querySelector(".range input[type='range']").value = 100;
+    
     currentSong.play();
     play.src = "pause.svg";
-    document.querySelector(".songinfo").innerHTML = decodeURI(track)
-        .replace("songs/", "")
+    document.querySelector(".songinfo").innerHTML = track
         .replace(".mp3", "")
-        .replaceAll("_", " ")
-        .replaceAll("%20", " ");
+        .replaceAll("_", " ");
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
     
     if (updateIndex) {
@@ -99,16 +124,22 @@ async function main() {
     songs = await getSongs(`songs/${defaultFolder}`); // Load songs from first card
     
     if (songs.length > 0) {
-        currentSong.src = `/${curFolder}/${songs[0]}`;
+        // Encode the path properly for the audio source
+        const encodedPath = curFolder.split('/').map(part => encodeURIComponent(part)).join('/');
+        const encodedTrack = encodeURIComponent(songs[0]);
+        currentSong.src = `/${encodedPath}/${encodedTrack}`;
         currentSong.load();
-        currentSong.volume = 1.0;
+        currentSong.volume = 1.0; // Set volume to maximum (100%)
         document.querySelector(".range input[type='range']").value = 100;
         
-        const firstSongName = decodeURI(songs[0])
-            .replace("songs/", "")
+        // Ensure high volume works on mobile devices
+        currentSong.addEventListener('loadedmetadata', () => {
+            currentSong.volume = 1.0;
+        });
+        
+        const firstSongName = songs[0]
             .replace(".mp3", "")
-            .replaceAll("_", " ")
-            .replaceAll("%20", " ");
+            .replaceAll("_", " ");
         document.querySelector(".songinfo").innerHTML = firstSongName;
         document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
     }
@@ -148,7 +179,9 @@ async function main() {
             songItem.addEventListener("click", () => {
                 const songPath = songItem.dataset.file;
                 
-                if (currentSong.src.endsWith(songPath.replace("songs/", ""))) {
+                // Check if this is the current song by comparing the encoded filename
+                const encodedSongPath = encodeURIComponent(songPath);
+                if (currentSong.src.includes(encodedSongPath)) {
                     if (!currentSong.paused) {
                         currentSong.pause();
                         play.src = "play.svg";
@@ -267,15 +300,25 @@ async function main() {
             
             // If there are songs, set up the first one
             if (songs.length > 0) {
-                currentSong.src = `/${curFolder}/${songs[0]}`;
+                // Encode the path properly for the audio source
+                const encodedPath = curFolder.split('/').map(part => encodeURIComponent(part)).join('/');
+                const encodedTrack = encodeURIComponent(songs[0]);
+                currentSong.src = `/${encodedPath}/${encodedTrack}`;
                 currentSong.load();
                 currentSongIndex = 0;
                 
-                const firstSongName = decodeURI(songs[0])
-                    .replace("songs/", "")
+                // Set volume to high for new playlist (mobile and desktop)
+                currentSong.volume = 1.0;
+                document.querySelector(".range input[type='range']").value = 100;
+                
+                // Ensure high volume works on mobile devices
+                currentSong.addEventListener('loadedmetadata', () => {
+                    currentSong.volume = 1.0;
+                });
+                
+                const firstSongName = songs[0]
                     .replace(".mp3", "")
-                    .replaceAll("_", " ")
-                    .replaceAll("%20", " ");
+                    .replaceAll("_", " ");
                 document.querySelector(".songinfo").innerHTML = firstSongName;
                 document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
                 

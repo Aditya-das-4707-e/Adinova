@@ -172,6 +172,14 @@ body.light-theme .navbar-logo-image {
     padding: 2px;
 }
 
+body.light-theme .songinfo {
+    color: black;
+}
+
+body.light-theme .songtime {
+    color: black;
+}
+
 .container {
     display: flex;
     gap: 5px;
