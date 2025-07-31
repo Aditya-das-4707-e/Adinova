@@ -66,28 +66,19 @@ async function getSongs(folder) {
     const normalizedFolder = folder.replace(/^\/|\/$/g, ''); // Remove leading/trailing slashes
     
     try {
-        // Encode the entire path properly for URL
-        const encodedPath = normalizedFolder.split('/').map(part => encodeURIComponent(part)).join('/');
-        console.log('Fetching from path:', `/${encodedPath}/`);
+        // Extract just the folder name from the path (e.g., "songs/Aditya (Me)" -> "Aditya (Me)")
+        const folderName = normalizedFolder.split('/').pop();
+        console.log('Getting songs for folder:', folderName);
         
-        let response = await fetch(`/${encodedPath}/`);
+        // Fetch the songs manifest
+        let response = await fetch('/songs.json');
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
-        let html = await response.text();
-        let div = document.createElement("div");
-        div.innerHTML = html;
-        let links = div.getElementsByTagName("a");
-        let songList = [];
+        let songsData = await response.json();
+        let songList = songsData[folderName] || [];
         
-        for (let link of links) {
-            if (link.href.endsWith(".mp3")) {
-                // Extract just the filename from the full URL
-                const fileName = decodeURIComponent(link.href.split('/').pop());
-                songList.push(fileName);
-            }
-        }
         console.log('Found songs:', songList);
         return songList;
     } catch (error) {
