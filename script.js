@@ -4,9 +4,11 @@ const updateSelectedSong = () => {
         const songPath = songItem.dataset.file;
         const encodedSongPath = encodeURIComponent(songPath);
 
-        if (currentSong.src.includes(encodedSongPath)) {
+        if (currentSong.src.includes(encodedSongPath) && !currentSong.paused) {
+            // Only apply styling if this is the current song AND it's playing
             songItem.classList.add("playing");
         } else {
+            // Remove styling if it's not the current song OR if it's paused
             songItem.classList.remove("playing");
         }
     });
@@ -146,6 +148,7 @@ async function main() {
         currentSong.load();
         currentSong.volume = 1.0; // Set volume to maximum (100%)
         document.querySelector(".range input[type='range']").value = 100;
+        currentSongIndex = 0; // Set the current song index
         
         // Ensure high volume works on mobile devices
         currentSong.addEventListener('loadedmetadata', () => {
@@ -215,6 +218,12 @@ async function main() {
 
     // Populate initial song list
     populateSongList();
+    
+    // Update styling for the initial song if it exists
+    if (songs.length > 0) {
+        updateSongListIcons();
+        updateSelectedSong();
+    }
 
     // Play/Pause button
     play.addEventListener("click", () => {
@@ -226,6 +235,7 @@ async function main() {
             play.src = "play.svg";
         }
         updateSongListIcons();
+        updateSelectedSong();
     });
 
     // Time updates
