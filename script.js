@@ -267,17 +267,20 @@ async function main() {
 
     // Mobile menu toggle
     const mobileToggle = document.getElementById('mobileToggle');
+    const hamburger = document.getElementById('hamburger');
     const sidebar = document.getElementById('sidebar');
     const mobileOverlay = document.getElementById('mobileOverlay');
 
     mobileToggle.addEventListener('click', () => {
         sidebar.classList.toggle('active');
+        hamburger.classList.toggle('active');
         mobileOverlay.classList.toggle('active');
         document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
     });
 
     mobileOverlay.addEventListener('click', () => {
         sidebar.classList.remove('active');
+        hamburger.classList.remove('active');
         mobileOverlay.classList.remove('active');
         document.body.style.overflow = '';
     });
